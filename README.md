@@ -12,7 +12,9 @@ The model that has been used here is a VGG19 model:
 
 To represent the style and content of the input image, we use the intermediate layers from the network. The layer used for the input image is `conv5_2`, and the layers for the style are `conv1_1, conv2_1, conv3_1, conv4_1 and conv5_1`. 
 
-To calculate the style of the image, we calculate the Gram matrix which takes the outer product of the feature vector with itself at each location, and averaging that outer product over all locations.
+To calculate the style of the image, we calculate the Gram matrix which takes the outer product of the feature vector with itself at each location, and averaging that outer product over all locations:
+
+<img src="https://render.githubusercontent.com/render/math?math=G_{cd}^l=\frac{\sum_{ij}{F_{ijc}^l(x)F_{ijd}^l(x)}}{IJ}">
 
 The optimizer used here is `Adam`, even though the paper recommends `LBFGS`.
 
