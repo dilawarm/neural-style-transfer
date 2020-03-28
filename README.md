@@ -16,7 +16,7 @@ To calculate the style of the image, we calculate the Gram matrix which takes th
 
 Here is the result of a basic implementation with my face styled with Kandinsky:
 
-![](pics/style_noise_dilawar.jpg)
+![](pics/style_noise_dilawar.png)
 
 The noise in this result is a result of a lot of high frequency artifacts. By adding the _total variation loss_ to the loss we have from before, we get this result:
 
