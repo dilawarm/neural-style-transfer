@@ -14,7 +14,9 @@ To represent the style and content of the input image, we use the intermediate l
 
 To calculate the style of the image, we calculate the Gram matrix which takes the outer product of the feature vector with itself at each location, and averaging that outer product over all locations.
 
-Here is the result of a basic implementation with my face styled with Kandinsky:
+The optimizer used here is `Adam`, even though the paper recommends `LBFGS`.
+
+Here is the result of a basic implementation with my face styled with Kandinsky, with alpha=1e4 and beta=1e-2:
 
 ![](pics/style_noise_dilawar.png)
 
