@@ -7,10 +7,12 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import Navbar from '../Navbar/index.js';
 
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
+
   },
   media: {
     height: 140,
@@ -21,13 +23,14 @@ function MediaCard() {
   const classes = useStyles();
 
   return (
+    <div style={{display: 'flex', justifyContent: 'center'}}>
     <Card className={classes.root}>
       <CardActionArea>
-        <CardMedia
-          className={classes.media}
-          image="https://miro.medium.com/max/767/1*B5zSHvNBUP6gaoOtaIy4wg.jpeg"
-          title="Neural Style Transfer"
-        />
+          <CardMedia
+            className={classes.media}
+            image="https://miro.medium.com/max/767/1*B5zSHvNBUP6gaoOtaIy4wg.jpeg"
+            title="Neural Style Transfer"
+          />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             Neural Style Transfer
@@ -41,18 +44,22 @@ function MediaCard() {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" color="primary">
+        <Button href="#/style" size="small" color="primary">
           Create your own image
         </Button>
       </CardActions>
     </Card>
+    </div>
   );
 }
 
 export default class Homepage extends Component {
     render() {
         return (
+          <div>
+            <Navbar where={1}/>
             <MediaCard />
+          </div>
         );
     }
 }

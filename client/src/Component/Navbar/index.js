@@ -13,19 +13,19 @@ const useStyles = makeStyles({
 
 export default function Navbar(where) {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(where.where);
 
   return (
     <BottomNavigation
       value={value}
       onChange={(event, newValue) => {
-        
+        setValue(newValue);
       }}
       showLabels
       className={classes.root}
     >
-      <BottomNavigationAction ompi={0} label="Style" icon={<BrushIcon />} />
-      <BottomNavigationAction label="Home" icon={<Home />} />
+      <BottomNavigationAction href = "#/style" label="Style" icon={<BrushIcon />} />
+      <BottomNavigationAction href = "#/" label="Home" icon={<Home />} />
       <BottomNavigationAction label="Add style" icon={<AssignmentIcon />} />
     </BottomNavigation>
   );
