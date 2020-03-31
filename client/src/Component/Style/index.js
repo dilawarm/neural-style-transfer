@@ -6,6 +6,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import Navbar from '../Navbar/index.js';
+import { createHashHistory } from 'history';
+
+const history = createHashHistory();
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -24,6 +27,9 @@ function ChooseStyle() {
   const [open, setOpen] = React.useState(false);
 
   const handleChange = (event) => {
+    if (event.target.value === "add") {
+      history.push("/add")
+    }
     setStyle(event.target.value);
   };
 
@@ -54,9 +60,7 @@ function ChooseStyle() {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          <MenuItem href="/#add" value={"add"}>Add style</MenuItem>
         </Select>
       </FormControl>
       <div style={{display: 'flex', marginTop: '2em'}}>
@@ -68,8 +72,6 @@ function ChooseStyle() {
     
   );
 }
-
-
 
 export default class Style extends Component {
     render() {

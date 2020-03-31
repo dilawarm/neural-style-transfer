@@ -26,7 +26,7 @@ export default function Navbar(where) {
     >
       <BottomNavigationAction href = "#/style" label="Style" icon={<BrushIcon />} />
       <BottomNavigationAction href = "#/" label="Home" icon={<Home />} />
-      <BottomNavigationAction label="Add style" icon={<AssignmentIcon />} />
+      <BottomNavigationAction href = "#/add" label="Add style" icon={<AssignmentIcon />} />
     </BottomNavigation>
   );
 }
