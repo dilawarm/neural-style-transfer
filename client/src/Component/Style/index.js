@@ -47,12 +47,14 @@ function ChooseStyle(styles) {
   const [style, setStyle] = React.useState('');
   const [image, setImage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(0);
 
   const handleChange = (event) => {
     if (event.target.value === "add") {
       history.push("/add")
+    } else {
+      setStyle(event.target.value);
     }
-    setStyle(event.target.value);
   };
 
   const handleImageChange = (event) => {
@@ -73,7 +75,8 @@ function ChooseStyle(styles) {
     let filename = image.name.split(".")[0];
     let timestamp = Date.now();
     form_data.append('image', image, filename + "-" + timestamp + "." + extension);
-    form_data.append('url', style);
+    form_data.append('link', style);
+    setLoading(1);
     axios.post("http://localhost:8000/api/uploads/", form_data, {
       headers: {
         'content-type': 'multipart/form-data'
@@ -117,6 +120,7 @@ function ChooseStyle(styles) {
         <SendIcon />
       </IconButton>
     </div>
+    {loading === 1 ? <h1>Hei</h1> : <div></div>}
     </div>
   );
 }
