@@ -5,27 +5,12 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import SendIcon from '@material-ui/icons/Send';
 import axios from 'axios';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import Button from '@material-ui/core/Button';
-
-const theme = createMuiTheme();
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-
-theme.typography.h2 = {
-  fontSize: '1.2rem',
-  '@media (min-width:600px)': {
-    fontSize: '1.5rem',
-  },
-  [theme.breakpoints.up('md')]: {
-    fontSize: '2rem',
-  },
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,10 +26,15 @@ function MultilineTextFields() {
   const [name, setName] = React.useState('');
   const [url, setUrl] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [error, setError] = React.useState(false);
 
   const handleClick = () => {
     setOpen(true);
   };
+
+  const handleError = () => {
+    setError(true);
+  }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -52,6 +42,14 @@ function MultilineTextFields() {
     }
 
     setOpen(false);
+  };
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setError(false);
   };
 
   const handleNameChange = (event) => {
@@ -79,20 +77,26 @@ function MultilineTextFields() {
           setUrl('');
           handleClick();
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          handleError();
+        });
   }
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
     <div style={{display: 'flex', justifyContent: 'center'}}>
+      <br></br><br></br>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
           Style uploaded
         </Alert>
       </Snackbar>
-      <ThemeProvider theme={theme}>
-            <Typography variant="h2">Upload style</Typography>
-        </ThemeProvider>
+      <Snackbar open={error} autoHideDuration={6000} onClose={handleErrorClose}>
+        <Alert onClose={handleErrorClose} severity="error">
+          Something went wrong
+        </Alert>
+      </Snackbar>
+      <h2>Add Style</h2>
       </div>
       <br></br>
       <div style={{display: 'flex', justifyContent: 'center'}}>
