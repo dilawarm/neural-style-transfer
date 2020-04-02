@@ -37,7 +37,8 @@ git clone https://github.com/dilawarm/neural-style-transfer.git
 cd neural-style-transfer
 pip3 install -r requirements.txt
 cd server/nst
-make run
+python3 manage.py migrate (only first time running the application)
+python3 manage.py runserver
 ```
 The server is now running on http://127.0.0.1:8000/
 
