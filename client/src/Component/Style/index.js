@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -9,6 +8,7 @@ import { createHashHistory } from 'history';
 import axios from 'axios';
 import IconButton from '@material-ui/core/IconButton';
 import SendIcon from '@material-ui/icons/Send';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const history = createHashHistory();
 
@@ -30,111 +30,30 @@ const init_styles = [
   },
 ];
 
-const useStyles = makeStyles((theme) => ({
-  button: {
-    display: 'block',
-    marginTop: theme.spacing(2),
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    width: '25ch',
-  },
-}));
+export default class findIdentity extends Component {
 
-function ChooseStyle(styles) {
-  const classes = useStyles();
-  const [style, setStyle] = React.useState('');
-  const [image, setImage] = React.useState('');
-  const [open, setOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(0);
-
-  const handleChange = (event) => {
-    if (event.target.value === "add") {
-      history.push("/add")
-    } else {
-      setStyle(event.target.value);
-    }
+  state = {
+    image: null,
+    result: null,
+    waiting: false,
+    style: '',
+    styles: [],
+    open:'',
   };
 
-  const handleImageChange = (event) => {
-    setImage(event.target.files[0]);
-  }
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleSend = (event) => {
-    let form_data = new FormData();
-    let extension = image.name.split(".")[1];
-    let filename = image.name.split(".")[0];
-    let timestamp = Date.now();
-    form_data.append('image', image, filename + "-" + timestamp + "." + extension);
-    form_data.append('link', style);
-    setLoading(1);
-    axios.post("http://localhost:8000/api/uploads/", form_data, {
-      headers: {
-        'content-type': 'multipart/form-data'
-      }
+  handleChange = (e) => {
+    this.setState({
+      [e.target.id]: e.target.value
     })
-        .then(res => {
-          console.log(res.data);
-        })
-        .catch(err => console.log(err))
-    }
+  };
 
-  return (
-    <div>
-    <h2 style={{display: 'flex', justifyContent: 'center'}}>Style your image</h2>
-    <div style={{display: 'flex', justifyContent: 'center'}}>
-      <FormControl className={classes.formControl}>
-        <InputLabel id="demo-controlled-open-select-label">Style</InputLabel>
-        <Select
-          labelId="demo-controlled-open-select-label"
-          id="demo-controlled-open-select"
-          open={open}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          value={style}
-          onChange={handleChange}
-        >
-          <MenuItem value="None">
-            <em>None</em>
-          </MenuItem>
-          {styles.styles.map(style => {return <MenuItem value={style.link}>{style.name}</MenuItem>})}
-          <MenuItem href="/#add" value={"add"}>Add style</MenuItem>
-        </Select>
-      </FormControl>
-      <div style={{display: 'flex', marginTop: '2em', marginLeft: '5em'}}>
-      <input type="file"
-             id="image"
-             onChange={handleImageChange}
-             accept="image/png, image/jpeg" required/>
-    </div>
-    <IconButton aria-label="delete" onClick={handleSend}>
-        <SendIcon />
-      </IconButton>
-    </div>
-    {loading === 1 ? <h1>Hei</h1> : <div></div>}
-    </div>
-  );
-}
+  handleImageChange = (e) => {
+    this.setState({
+      image: e.target.files[0]
+    })
+  };
 
-export default class Style extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        styles:[]
-      };
-      this.loadStyles = this.loadStyles.bind(this);
-    }
-
-    componentWillMount() {
+  componentWillMount() {
       this.loadStyles();
     }
 
@@ -147,12 +66,102 @@ export default class Style extends Component {
       }
     }
 
-    render() {
-        return (
-          <div>
-            <Navbar where={0}/>
-            <ChooseStyle styles={this.state.styles}/>   
-          </div>
-        );
+  handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(this.state);
+    this.setState({waiting: true});
+    this.forceUpdate();
+    let form_data = new FormData();
+    let extension = this.state.image.name.split(".")[1];
+    let filename = this.state.image.name.split(".")[0];
+    let timestamp = Date.now();
+    form_data.append('image', this.state.image, filename + "-" + timestamp + "." + extension);
+    form_data.append('link', this.state.style)
+    let url = 'http://localhost:8000/api/uploads/';
+    axios.post(url, form_data, {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    })
+        .then(res => {
+          console.log(res.data);
+          this.setState({result: res.data.image.split("/media/upload_images/")[1]});
+          console.log(this.state.result);
+          this.setState({waiting: false});
+          this.forceUpdate();
+        })
+        .catch(err => console.log(err))
+  };
+
+  handleClose = () => {
+    this.setState({open: false});
+  };
+
+  handleOpen = () => {
+    this.setState({open: true});
+  };
+
+  handleChange = (event) => {
+    if (event.target.value === "add") {
+      history.push("/add")
+    } else {
+      this.setState({style: event.target.value});
     }
+  };
+
+  render() {
+    if (this.state.waiting) {
+      return (
+        <div>
+        <Navbar where={0} />
+        <LinearProgress variant="query" />
+        </div>
+      );
+    }
+    else if (!this.state.result) {
+      return (
+        <div>
+          <Navbar where={0} />
+          <h1 style={{display: 'flex', justifyContent: 'center'}}>Style your image</h1>
+          <div style={{display: 'flex', justifyContent: 'center', marginTop: '6em'}}>
+            <FormControl style={{margin: '1', minWidth: 120, width: '25ch'}}>
+              <InputLabel id="demo-controlled-open-select-label">Style</InputLabel>
+              <Select
+                labelId="demo-controlled-open-select-label"
+                id="demo-controlled-open-select"
+                open={this.state.open}
+                onClose={this.handleClose}
+                onOpen={this.handleOpen}
+                value={this.state.style}
+                onChange={this.handleChange}
+              >
+                <MenuItem value="None">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem href="/#add" value={"add"}><em>Add style</em></MenuItem>
+                {this.state.styles.map(style => {return <MenuItem value={style.link}>{style.name}</MenuItem>})}
+              </Select>
+            </FormControl>
+            <div style={{display: 'flex', marginTop: '2em', marginLeft: '5em'}}>
+            <input type="file"
+                  id="image"
+                  onChange={this.handleImageChange}
+                  accept="image/png, image/jpeg" required/>
+          </div>
+          <IconButton aria-label="delete" onClick={this.handleSubmit}>
+              <SendIcon />
+            </IconButton>
+          </div>
+          </div>
+      );
+    } else {
+      return (
+        <div className="App">
+        <Navbar where={0}/>
+        <h1>Result</h1>
+        <img alt="styled result" src={"ai_uploads/"+this.state.result}/>
+        </div>
+      );
+    }
+  }
 }

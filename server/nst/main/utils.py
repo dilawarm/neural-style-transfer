@@ -4,6 +4,8 @@ import PIL.Image
 import time
 import functools
 import tensorflow_hub as hub
+import cv2
+import os
 
 def tensor_to_image(tensor):
     tensor = tensor*255
@@ -29,14 +31,19 @@ def load_img(path_to_img):
     img = img[tf.newaxis, :]
     return img
 
-def style(content_path, style_path):
+def style(content_path, style_path, filename):
     content_image = load_img(content_path)
     style_image = load_img(style_path)
 
-    if style_path == "None" or style_path == "":
-        return tensor_to_image(content_image)
-
-    hub_module = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/1')
-    stylized_image = hub_module(tf.constant(content_image), tf.constant(style_image))[0]
-
-    return tensor_to_image(stylized_image)
+    if style_path == content_path:
+        stylized_image = tensor_to_image(style_image)
+        img = cv2.cvtColor(np.array(stylized_image), cv2.COLOR_RGB2BGR);
+    else:
+        hub_module = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/1')
+        stylized_image = hub_module(tf.constant(content_image), tf.constant(style_image))[0]
+        stylized_image = tensor_to_image(stylized_image)
+        img = cv2.cvtColor(np.array(stylized_image), cv2.COLOR_RGB2BGR)
+    s = "/"
+    dir_path = os.path.dirname(os.path.realpath(__file__)).split(s)[:-3]
+    dir_path = s.join(dir_path)
+    cv2.imwrite(dir_path + f'/client/public/ai_uploads/{filename}', img)
