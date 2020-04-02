@@ -26,5 +26,27 @@ The noise in this result is a result of a lot of high frequency artifacts. By ad
 
 ![](pics/stylized-image.png)
 
+## Requirements
+* Python 3.6 or above
+* npm
+
 ## How to run
-_Under production ..._
+Open your terminal and write the following commands:
+```
+git clone https://github.com/dilawarm/neural-style-transfer.git
+cd neural-style-transfer
+pip3 install -r requirements.txt
+cd server/nst
+make run
+```
+The server is now running on http://127.0.0.1:8000/
+
+Open a new terminal window and `cd` to `neural-style-transfer`. Write the following commands:
+```
+cd client
+npm install
+npm start
+```
+The website is now running on http://localhost:3000/
+
+Enjoy!
