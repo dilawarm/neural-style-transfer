@@ -6,6 +6,10 @@ from .serializers import StyleSerializer, UploadSerializer
 from .models import Style, Upload
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
+from .utils import style
+import tensorflow as tf
+import os
+import time
 
 # Create your views here.
 class StyleView(APIView):
@@ -36,8 +40,20 @@ class UploadView(APIView):
     def post(self, request, *args, **kwargs):
         posts_serializer = UploadSerializer(data=request.data)
         if posts_serializer.is_valid():
-            filename = request.data["image"]
             posts_serializer.save()
+            filename = request.data["image"]
+            link = request.data["link"]
+            print("FILENAME: ", filename)
+            print("LINK: ", link)
+            extension = link.split(".")[-1]
+            s = "/"
+            dir_path = os.path.dirname(os.path.realpath(__file__)).split(s)[:-1]
+            dir_path = s.join(dir_path)
+            style_path = tf.keras.utils.get_file(f"{time.time()}.{extension}", link)
+            image = style(dir_path + f"/media/upload_images/{filename}", style_path)
+            dir_path = dir_path.split(s)[:-2]
+            dir_path = s.join(dir_path)
+            image.save(dir_path + f'/client/public/ai_uploads/{filename}')
             return Response(posts_serializer.data, status=status.HTTP_201_CREATED)
         else:
             print('error', posts_serializer.errors)
