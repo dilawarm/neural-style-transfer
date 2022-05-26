@@ -1,4 +1,4 @@
-tensorflow==2.4.0
+tensorflow==2.7.2
 tensorflow_hub==0.8.0
 numpy==1.17.4
 opencv_python==4.2.0.32
